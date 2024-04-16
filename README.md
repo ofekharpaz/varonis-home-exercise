@@ -201,7 +201,7 @@ Then run the code by running in terminal
 
 To use this code properly, you need an access token to the github repository.
 
-**Functions explinations:**
+**Functions explanations:**
 
 1. `check_and_fix_branch_protection():`
     - This function checks if critical branches (such as master or main) in the specified repository are protected.
@@ -225,6 +225,10 @@ To use this code properly, you need an access token to the github repository.
     - It retrieves the list of collaborators for the repository and iterates through each collaborator.
     - If the user is our tester user, change its permissions.
 
+Example output:
+
+![alt text](image.png)
+
 
 ## Bonus: <a id="bonus"></a>
 
@@ -234,7 +238,7 @@ By enforcing restrictions on commits to disallow force pushes, we effectively mi
 
 After running the script to fix the configuration, we received the following error message:
 
-`409 {"message": "Could not create file: Changes must be made through a pull request.", "documentation_url": "https://docs.github.com/articles/about-protected-branches"}`
+![alt text](image-1.png)
 
 To run the malicious script, simply run
 
