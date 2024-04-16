@@ -5,6 +5,9 @@
 - [Enforce HTTPS for GitHub Pages](#enforce-https-for-github-pages)
 - [Code Scanning Alerts](#code-scanning-alerts)
 - [Deploy Keys](#deploy-keys)
+- [Framework Expansion Strategy](#framework-expansion-strategy)
+- [The Python Code](#python-example)
+- [Bonus](#bonus)
 
 ## 1. Branch Protection Rules: <a id="branch-protection-rules"></a>
 
@@ -159,3 +162,80 @@ If deploy keys are misconfigured or improperly added:
     Implement automated health checks to periodically verify the functionality and responsiveness of configured deploy keys.
     If a deploy key is found to be misconfigured or inactive, automatically attempt to reconfigure or reactivate it to ensure uninterrupted access to the repository.
 
+
+## Framework Expansion Strategy: <a id="framework-expansion-strategy"></a>
+
+
+Expanding our existing scripts into a comprehensive framework for managing misconfigurations across multiple services requires a systematic approach that ensures scalability, flexibility, and maintainability. 
+
+The following strategy outlines the key steps involved in this expansion process:
+
+1. **Service Identification and Analysis:**
+    - Identify the services our framework will support. In our case, it will be Github and services that may be similiar to github that supports version control and collaboration between developers.
+
+    - Look for commonalities and recurring patterns among these services to identify areas where a unified approach can be applied. For example, since we are supporting version control websites, most of them probably has branches and protection rules for them.
+
+2. **Encapsulation and Abstraction:**
+    - encapsulate the implementation logic for managing configurations into modular and reusable components.
+
+    - Abstract away the service-specific details by defining a common interface or set of methods that each component must implement.
+
+3. **Service-Specific Implementation:**
+    - Implement the encapsulated components for each supported service according to its respective API and configuration mechanisms.
+
+4. **Usage Guidelines and Documentation:**
+    - Provide comprehensive usage guidelines and documentation for developers and administrators to effectively utilize the framework.
+
+    - Include examples, code snippets, and troubleshooting tips to assist users in leveraging the framework's capabilities effectively.
+
+
+## Python Example Code: <a id="python-example"></a>
+
+Firstly, to use the code, install the python github library:
+
+`pip install PyGithub`
+
+Then run the code by running in terminal
+
+`python configuration_fix.py`
+
+To use this code properly, you need an access token to the github repository.
+
+**Functions explinations:**
+
+1. `check_and_fix_branch_protection():`
+    - This function checks if critical branches (such as master or main) in the specified repository are protected.
+    - If a critical branch is not protected, it edits the branch protection settings to require at least one approving review, dismiss stale reviews, and disallow direct commits and deletions.
+    - The edit_protection() method is used to modify the branch protection settings.
+
+2. `check_and_fix_deploy_keys():`
+    - This function checks the access control settings via deploy keys for the repository. 
+    - It retrieves the deploy keys associated with the repository and prints information about each deploy key, including its ID, title, and permissions (read-only or read/write).
+
+3. `_update_collaborator_permission(collaborator_username, permission)`
+
+    - This is a helper function used internally by check_and_fix_access_control() to update the permission level for a specific collaborator.
+
+    - Since there is no direct function to edit permissions, we need to send a REST API reqeust. It sends a PUT request to the GitHub API to update the collaborator's permission level using the provided collaborator_username and permission.
+
+    * Please note that Personal repos only have two permission levels. Owner and collaborator. https://docs.github.com/en/get-started/learning-about-github/access-permissions-on-github#personal-accounts
+
+4. `check_and_fix_access_control():`
+    - This function checks the access control settings for collaborators in the repository.
+    - It retrieves the list of collaborators for the repository and iterates through each collaborator.
+    - If the user is our tester user, change its permissions.
+
+
+## Bonus: <a id="bonus"></a>
+
+I've developed a script to emphasize the importance of branch protection rules. If an adversary were to gain access to my GitHub token and find that the main branch wasn't protected, they would have the ability to commit anything they wanted, including potentially deleting the entire codebase.
+
+By enforcing restrictions on commits to disallow force pushes, we effectively mitigate this type of attack.
+
+After running the script to fix the configuration, we received the following error message:
+
+`409 {"message": "Could not create file: Changes must be made through a pull request.", "documentation_url": "https://docs.github.com/articles/about-protected-branches"}`
+
+To run the malicious script, simply run
+
+`python malicious_script.py`
